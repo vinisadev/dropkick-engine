@@ -17,5 +17,4 @@ private:
   void cleanup();
 
   std::unique_ptr<Renderer> m_renderer;
-  bool m_running;
 };

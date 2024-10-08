@@ -1,23 +1,16 @@
 #include "application.h"
 #include <stdexcept>
 
-Application::Application() : m_running(false) {
-  init();
-}
+Application::Application() : m_renderer(std::make_unique<Renderer>()) {}
 
-Application::~Application() {
-  cleanup();
-}
-
-void Application::init() {
-  m_renderer = std::make_unique<Renderer>();
-  m_running = true;
-}
+Application::~Application() = default;
 
 void Application::run() {
-  while (m_running) {
+  while (!m_renderer->shouldClose()) {
+    m_renderer->beginFrame();
     update();
     render();
+    m_renderer->endFrame();
   }
 }
 
@@ -26,11 +19,10 @@ void Application::update() {
 }
 
 void Application::render() {
-  m_renderer->beginFrame();
-  // TODO: Implement rendering logic
-  m_renderer->endFrame();
-}
-
-void Application::cleanup() {
-  m_renderer.reset();
+  ImGui::Begin("Dropkick Console!");
+  ImGui::Text("Welcome to the Dropkick Engine!");
+  if (ImGui::Button("Click me!")) {
+    // TODO: Handle button click
+  }
+  ImGui::End();
 }
