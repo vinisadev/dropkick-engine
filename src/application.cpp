@@ -2,7 +2,7 @@
 #include <imgui.h>
 #include <iostream>
 
-Application::Application() : m_renderer(std::make_unique<Renderer>(true)) {}
+Application::Application() : m_renderer(std::make_unique<Renderer>(true)), clear_color(0.45f, 0.55f, 0.60f, 1.00f) {}
 
 Application::~Application() = default;
 
@@ -16,31 +16,21 @@ void Application::run() {
 }
 
 void Application::update() {
-    // TODO: Implement game logic updates
+    m_renderer->setClearColor(clear_color);
 }
 
 void Application::render() {
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
-    
-    // Create a full-screen window
-    ImGui::SetNextWindowPos(ImVec2(0, 0));
-    ImGui::SetNextWindowSize(ImVec2(static_cast<float>(m_renderer->getWidth()), static_cast<float>(m_renderer->getHeight())));
-    
-    ImGui::Begin("Main Window", nullptr, window_flags);
+    const float padding = 10.0f;
+    const float panelWidth = (m_renderer->getWidth() - padding * 3) / 2;
+    const float panelHeight = (m_renderer->getHeight() - padding * 3) / 2;
 
-    if (ImGui::BeginMenuBar()) {
-        if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Exit")) {
-                // TODO: Implement exit functionality
-            }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMenuBar();
-    }
-
+    // Control Panel (top-left)
+    ImGui::SetNextWindowPos(ImVec2(padding, padding));
+    ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight));
+    ImGui::Begin("Control Panel", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
     ImGui::Text("Welcome to the Dropkick Game Engine!");
     ImGui::Text("Window size: %dx%d", m_renderer->getWidth(), m_renderer->getHeight());
-
+    
     static float f = 0.0f;
     static int counter = 0;
 
@@ -54,6 +44,29 @@ void Application::render() {
     ImGui::Text("counter = %d", counter);
 
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::End();
 
+    // Scene Hierarchy panel (top-right)
+    ImGui::SetNextWindowPos(ImVec2(padding * 2 + panelWidth, padding));
+    ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight));
+    ImGui::Begin("Scene Hierarchy", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+    ImGui::Text("This panel could show your game objects.");
+    // TODO: Implement a tree view of game objects
+    ImGui::End();
+
+    // Properties panel (bottom-left)
+    ImGui::SetNextWindowPos(ImVec2(padding, padding * 2 + panelHeight));
+    ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight));
+    ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+    ImGui::Text("This panel could show properties of selected objects.");
+    // TODO: Implement property editing for selected objects
+    ImGui::End();
+
+    // Console panel (bottom-right)
+    ImGui::SetNextWindowPos(ImVec2(padding * 2 + panelWidth, padding * 2 + panelHeight));
+    ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight));
+    ImGui::Begin("Console", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+    ImGui::Text("This panel could show debug and log messages.");
+    // TODO: Implement a scrollable console with log messages
     ImGui::End();
 }
